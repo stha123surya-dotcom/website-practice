@@ -1,39 +1,121 @@
+<!-- index.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>surya practice</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Floor Area Calculator</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <!-- nav bar-->
-    
+  <div class="container">
+    <h1>Floor Area Calculator</h1>
 
-<nav>
-    
-    <div class="container logo">
-        
-        <div class="text1">
-            <a href="#">Home</a> 
-        </div>
-        <div class="text1">
-            <a href="#">Portfolio</a>
-        </div>
-        <div class="text1">
-            <a href="#">About Me</a>
-        </div>
-                
+    <div id="floors"></div>
 
-    </div>
-    </div>
-    <hr>
-</nav>
-    
-<!-- Introduction -->
-<div class="intro container">
-    <div class="image">
-        <div class="box"></div>
+    <h2>Total Area: <span id="totalArea">0</span> sq.ft</h2>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
+
+/* style.css */
+body {
+  font-family: Arial, sans-serif;
+  background: #f5f5f5;
+  margin: 0;
+}
+.container {
+  max-width: 900px;
+  margin: auto;
+  padding: 20px;
+}
+.floor {
+  background: #fff;
+  padding: 15px;
+  margin-bottom: 15px;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+.floor h3 {
+  margin-top: 0;
+}
+.row {
+  display: flex;
+  justify-content: space-between;
+  margin: 5px 0;
+}
+input {
+  width: 60px;
+}
+.total {
+  font-weight: bold;
+  margin-top: 10px;
+}
+
+// script.js
+const roomSizes = {
+  bedroom: 10*12,
+  toilet: 6*6,
+  attached: 6*5.5,
+  staircase: 7.5*13,
+  kitchen: 13*15,
+  porch: 12*14,
+  balcony: 3*6,
+  laundry: 5*6
+};
+
+const floorCount = 5;
+const floorsDiv = document.getElementById('floors');
+
+function createFloor(index) {
+  const floor = document.createElement('div');
+  floor.className = 'floor';
+
+  let html = `<h3>Floor ${index+1}</h3>`;
+
+  for (let room in roomSizes) {
+    html += `
+      <div class="row">
+        <label>${room}</label>
+        <input type="number" min="0" value="0" data-room="${room}" />
+      </div>
+    `;
+  }
+
+  html += `<div class="total">Floor Area: <span class="area">0</span> sq.ft</div>`;
+
+  floor.innerHTML = html;
+  floorsDiv.appendChild(floor);
+
+  const inputs = floor.querySelectorAll('input');
+  inputs.forEach(input => input.addEventListener('input', calculate));
+}
+
+for (let i=0;i<floorCount;i++) createFloor(i);
+
+function calculate() {
+  let grandTotal = 0;
+
+  document.querySelectorAll('.floor').forEach(floor => {
+    let total = 0;
+
+    floor.querySelectorAll('input').forEach(input => {
+      const room = input.dataset.room;
+      const count = parseFloat(input.value) || 0;
+      total += roomSizes[room] * count;
+    });
+
+    const lobby = total * 0.2;
+    total += lobby;
+
+    floor.querySelector('.area').innerText = total.toFixed(2);
+    grandTotal += total;
+  });
+
+  document.getElementById('totalArea').innerText = grandTotal.toFixed(2);
+}
     </div>
     <div class="text2">
         <p  style="font-size: larger;justify-content: center; align-items: center;">"Surya Man Shrestha"</p><hr>
